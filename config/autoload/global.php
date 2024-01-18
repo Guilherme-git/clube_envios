@@ -5,7 +5,7 @@ return [
     ],
     'db' => [
         'adapters' => [
-            'melhor_envio' => [],
+            'clube_envios' => [],
         ],
     ],
     'api-tools-mvc-auth' => [

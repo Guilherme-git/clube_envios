@@ -15,7 +15,7 @@ class CotacaoResource extends AbstractResourceListener
     {
         $this->adapter = new Adapter([
             'driver'   => 'PDO_Mysql',
-            'database' => 'melhor_envio',
+            'database' => 'clube_envios',
             'username' => 'root',
             'password' => '',
         ]);
