@@ -88,29 +88,23 @@ return [
     ],
     'api-tools-content-negotiation' => [
         'controllers' => [
-            'API\\V1\\Rest\\Cotacao\\Controller' => 'HalJson',
-            'API\\V1\\Rest\\CalcularFrete\\Controller' => 'HalJson',
+            'API\\V1\\Rest\\Cotacao\\Controller' => 'Json',
+            'API\\V1\\Rest\\CalcularFrete\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'API\\V1\\Rest\\Cotacao\\Controller' => [
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/hal+json',
-                2 => 'application/json',
+                0 => 'application/json',
             ],
             'API\\V1\\Rest\\CalcularFrete\\Controller' => [
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/hal+json',
-                2 => 'application/json',
+                0 => 'application/json',
             ],
         ],
         'content_type_whitelist' => [
             'API\\V1\\Rest\\Cotacao\\Controller' => [
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/json',
+                0 => 'application/json',
             ],
             'API\\V1\\Rest\\CalcularFrete\\Controller' => [
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/json',
+                0 => 'application/json',
             ],
         ],
     ],

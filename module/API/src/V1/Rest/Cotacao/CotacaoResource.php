@@ -82,7 +82,8 @@ class CotacaoResource extends AbstractResourceListener
         $select->columns(["id_cotacao","id_servico","valor"]);
         $select->where(['id_cotacao' => $id]);
         $select->join("usuarios","cotacao.id_usuario = usuarios.id",["id","nome"]);
-        $select->join("servicos","cotacao.id_servico = servicos.id_servico",["id_servico","nm_servico"]);
+        $select->join("servicos","cotacao.id_servico = servicos.id_servico",["id_servico","nm_servico","id_transportadora"]);
+        $select->join("transportadoras","servicos.id_transportadora = transportadoras.id",["nm_transportadora"]);
 
         $selectString = $sql->buildSqlString($select);
         $results = $this->adapter->query($selectString, $this->adapter::QUERY_MODE_EXECUTE)->toArray();
@@ -92,14 +93,25 @@ class CotacaoResource extends AbstractResourceListener
         }
         $return = array();
 
+
         foreach ($results as $result)
         {
             array_push($return,[
                 "id_cotacao" => $result["id_cotacao"],
                 "id_servico" => $result["id_servico"],
                 "valor" => $result["valor"],
-                "usuario" => ["id"=>$result["id"],"nome"=>$result["nome"]],
-                "servicos" => ["id"=>$result["id_servico"],"nome"=>$result["nm_servico"]]
+                "usuario" => [
+                    "id"=> $result["id"],
+                    "nome"=> $result["nome"],
+                ],
+                "servicos" => [
+                    "id"=>$result["id_servico"],
+                    "nome"=>$result["nm_servico"],
+                    "transportadora" => [
+                        "id" => $result["id_transportadora"],
+                        "nome" => $result["nm_transportadora"]
+                    ]
+                ]
             ]);
         }
 
@@ -119,7 +131,8 @@ class CotacaoResource extends AbstractResourceListener
         $select->from('cotacao');
         $select->columns(["id_cotacao","id_servico","valor"]);
         $select->join("usuarios","cotacao.id_usuario = usuarios.id",["id","nome"]);
-        $select->join("servicos","cotacao.id_servico = servicos.id_servico",["id_servico","nm_servico"]);
+        $select->join("servicos","cotacao.id_servico = servicos.id_servico",["id_servico","nm_servico","id_transportadora"]);
+        $select->join("transportadoras","servicos.id_transportadora = transportadoras.id",["nm_transportadora"]);
 
         if($params['id_usuario']) {
             $select->where(['id_usuario' => $params['id_usuario']]);
@@ -139,7 +152,14 @@ class CotacaoResource extends AbstractResourceListener
                     "id_servico" => $result["id_servico"],
                     "valor" => $result["valor"],
                     "usuario" => ["id"=>$result["id"],"nome"=>$result["nome"]],
-                    "servicos" => ["id"=>$result["id_servico"],"nome"=>$result["nm_servico"]]
+                    "servicos" => [
+                        "id"=>$result["id_servico"],
+                        "nome"=>$result["nm_servico"],
+                        "transportadora" => [
+                            "id" => $result["id_transportadora"],
+                            "nome" => $result["nm_transportadora"]
+                        ]
+                    ]
                 ]);
             }
 
