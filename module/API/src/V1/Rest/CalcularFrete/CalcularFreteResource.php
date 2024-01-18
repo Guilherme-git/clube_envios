@@ -181,6 +181,9 @@ class CalcularFreteResource extends AbstractResourceListener
         if(!$params["peso"]) {
             return new ApiProblem(422, "Informe o peso");
         }
+        if(!$params["valor"]) {
+            return new ApiProblem(422, "Informe o valor");
+        }
         return false;
     }
 }
