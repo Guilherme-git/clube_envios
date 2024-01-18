@@ -10,9 +10,7 @@ return [
     ],
     'api-tools-mvc-auth' => [
         'authentication' => [
-            'map' => [
-                'API\\V1' => 'autorizacao',
-            ],
+            'map' => [],
         ],
     ],
 ];
