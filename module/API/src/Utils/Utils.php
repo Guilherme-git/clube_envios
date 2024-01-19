@@ -1,7 +1,6 @@
 <?php
 
 namespace API\Utils;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\Sql;
 
