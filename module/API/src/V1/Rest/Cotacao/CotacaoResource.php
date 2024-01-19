@@ -1,6 +1,7 @@
 <?php
 namespace API\V1\Rest\Cotacao;
 
+use API\Utils\Utils;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
 use Laminas\Db\Adapter\Adapter;
@@ -10,15 +11,14 @@ use Laminas\Db\Sql\Sql;
 class CotacaoResource extends AbstractResourceListener
 {
     private $adapter;
+    private $header;
+    private $tokenValidate;
 
     public function __construct()
     {
-        $this->adapter = new Adapter([
-            'driver'   => 'PDO_Mysql',
-            'database' => 'clube_envios',
-            'username' => 'root',
-            'password' => '',
-        ]);
+        $this->adapter = Utils::DBConnection();
+        $this->header = Utils::getHeader();
+        $this->tokenValidate = Utils::validateToken();
     }
 
     /**
@@ -29,6 +29,10 @@ class CotacaoResource extends AbstractResourceListener
      */
     public function create($data)
     {
+        if($this->tokenValidate) {
+            return new ApiProblem(400, $this->tokenValidate["detail"]);
+        }
+
         $sql = new Sql($this->adapter);
 
         $insert = $sql->insert();
@@ -75,6 +79,10 @@ class CotacaoResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
+        if($this->tokenValidate) {
+            return new ApiProblem(400, $this->tokenValidate["detail"]);
+        }
+
         $sql = new Sql($this->adapter);
 
         $select = $sql->select();
@@ -126,6 +134,10 @@ class CotacaoResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        if($this->tokenValidate) {
+            return new ApiProblem(400, $this->tokenValidate["detail"]);
+        }
+
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->from('cotacao');

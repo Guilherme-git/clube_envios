@@ -1,6 +1,7 @@
 <?php
 namespace API\V1\Rest\CalcularFrete;
 
+use API\Utils\Utils;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
 use Laminas\Db\Adapter\Adapter;
@@ -10,15 +11,14 @@ use Laminas\Stdlib\Parameters;
 class CalcularFreteResource extends AbstractResourceListener
 {
     private $adapter;
+    private $header;
+    private $tokenValidate;
 
     public function __construct()
     {
-        $this->adapter = new Adapter([
-            'driver'   => 'PDO_Mysql',
-            'database' => 'clube_envios',
-            'username' => 'root',
-            'password' => '',
-        ]);
+        $this->adapter = Utils::DBConnection();
+        $this->header = Utils::getHeader();
+        $this->tokenValidate = Utils::validateToken();
     }
     /**
      * Create a resource
@@ -72,6 +72,10 @@ class CalcularFreteResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        if($this->tokenValidate) {
+            return new ApiProblem(400, $this->tokenValidate["detail"]);
+        }
+
         if($this->emptyInputs($params)) {
             return $this->emptyInputs($params);
         }
@@ -80,9 +84,9 @@ class CalcularFreteResource extends AbstractResourceListener
         $pesoInicio = floatval(min($params["peso"],$pesoVolume));
         $pesoFim = floatval(max($params["peso"],$pesoVolume));
 
-        $fretes = $this->adapter->query("select * from vtex_valores 
+        $fretes = $this->adapter->query("select * from vtex_valores
         INNER JOIN servicos ON servicos.id_servico = vtex_valores.id_servico
-        INNER JOIN transportadoras ON servicos.id_transportadora = transportadoras.id where 
+        INNER JOIN transportadoras ON servicos.id_transportadora = transportadoras.id where
         cep_inicio = ? and cep_final = ? and valor <= ? and peso_inicial <= ? and peso_final <= ?",
             [
                 $params["cep_origem"],

@@ -4,6 +4,7 @@ return [
         'factories' => [
             \API\V1\Rest\Cotacao\CotacaoResource::class => \API\V1\Rest\Cotacao\CotacaoResourceFactory::class,
             \API\V1\Rest\CalcularFrete\CalcularFreteResource::class => \API\V1\Rest\CalcularFrete\CalcularFreteResourceFactory::class,
+            \API\V1\Rest\Auth\AuthResource::class => \API\V1\Rest\Auth\AuthResourceFactory::class,
         ],
     ],
     'router' => [
@@ -26,12 +27,22 @@ return [
                     ],
                 ],
             ],
+            'api.rest.auth' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/auth[/:auth_id]',
+                    'defaults' => [
+                        'controller' => 'API\\V1\\Rest\\Auth\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'api-tools-versioning' => [
         'uri' => [
             0 => 'api.rest.cotacao',
             1 => 'api.rest.calcular-frete',
+            2 => 'api.rest.auth',
         ],
     ],
     'api-tools-rest' => [
@@ -85,11 +96,30 @@ return [
             'collection_class' => \API\V1\Rest\CalcularFrete\CalcularFreteCollection::class,
             'service_name' => 'CalcularFrete',
         ],
+        'API\\V1\\Rest\\Auth\\Controller' => [
+            'listener' => \API\V1\Rest\Auth\AuthResource::class,
+            'route_name' => 'api.rest.auth',
+            'route_identifier_name' => 'auth_id',
+            'collection_name' => 'auth',
+            'entity_http_methods' => [
+                0 => 'POST',
+            ],
+            'collection_http_methods' => [
+                0 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \API\V1\Rest\Auth\AuthEntity::class,
+            'collection_class' => \API\V1\Rest\Auth\AuthCollection::class,
+            'service_name' => 'Auth',
+        ],
     ],
     'api-tools-content-negotiation' => [
         'controllers' => [
             'API\\V1\\Rest\\Cotacao\\Controller' => 'Json',
             'API\\V1\\Rest\\CalcularFrete\\Controller' => 'Json',
+            'API\\V1\\Rest\\Auth\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'API\\V1\\Rest\\Cotacao\\Controller' => [
@@ -98,12 +128,18 @@ return [
             'API\\V1\\Rest\\CalcularFrete\\Controller' => [
                 0 => 'application/json',
             ],
+            'API\\V1\\Rest\\Auth\\Controller' => [
+                0 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'API\\V1\\Rest\\Cotacao\\Controller' => [
                 0 => 'application/json',
             ],
             'API\\V1\\Rest\\CalcularFrete\\Controller' => [
+                0 => 'application/json',
+            ],
+            'API\\V1\\Rest\\Auth\\Controller' => [
                 0 => 'application/json',
             ],
         ],
@@ -132,6 +168,18 @@ return [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'api.rest.calcular-frete',
                 'route_identifier_name' => 'calcular_frete_id',
+                'is_collection' => true,
+            ],
+            \API\V1\Rest\Auth\AuthEntity::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.auth',
+                'route_identifier_name' => 'auth_id',
+                'hydrator' => \Laminas\Hydrator\ObjectPropertyHydrator::class,
+            ],
+            \API\V1\Rest\Auth\AuthCollection::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.auth',
+                'route_identifier_name' => 'auth_id',
                 'is_collection' => true,
             ],
         ],
@@ -163,6 +211,9 @@ return [
         'API\\V1\\Rest\\Cotacao\\Controller' => [
             'input_filter' => 'API\\V1\\Rest\\Cotacao\\Validator',
         ],
+        'API\\V1\\Rest\\Auth\\Controller' => [
+            'input_filter' => 'API\\V1\\Rest\\Auth\\Validator',
+        ],
     ],
     'input_filter_specs' => [
         'API\\V1\\Rest\\CalcularFrete\\Validator' => [],
@@ -187,6 +238,22 @@ return [
                 'filters' => [],
                 'name' => 'valor',
                 'error_message' => 'Informe o valor',
+            ],
+        ],
+        'API\\V1\\Rest\\Auth\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'login',
+                'error_message' => 'Informe o login',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'senha',
+                'error_message' => 'Informe a senha',
             ],
         ],
     ],
