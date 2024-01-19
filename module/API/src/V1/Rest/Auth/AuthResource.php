@@ -19,6 +19,7 @@ class AuthResource extends AbstractResourceListener
 
     public function __construct()
     {
+        Utils::timezone();
         $this->adapter = Utils::DBConnection();
         $this->header = Utils::getHeader();
     }
@@ -54,7 +55,7 @@ class AuthResource extends AbstractResourceListener
             $insert->into("access_token");
             $insert->columns(["access_token", "id_usuario", "expires_in", "dt_criacao"]);
             $insert->values([
-                'access_token' => md5($results[0]['login'].$results[0]['senha']),
+                'access_token' => md5($results[0]['login'].time()),
                 'id_usuario'   => $results[0]['id'],
                 'expires_in'   => strtotime('+1 day', time()),
                 'dt_criacao'   => date("Y-m-d H:i:s"),
@@ -65,12 +66,13 @@ class AuthResource extends AbstractResourceListener
             return [
                 "id_usuario"=>$results[0]['id'],
                 "nome"=>$results[0]['nome'],
-                "token"=>md5($results[0]['login'].$results[0]['senha'])
+                "token"=>md5($results[0]['login'].time())
             ];
         } else {
             $update = $sql->update("access_token");
+            $update->where(['id_usuario' => $results[0]['id']]);
             $update->set([
-                'access_token' => md5($results[0]['login'].$results[0]['senha']),
+                'access_token' => md5($results[0]['login'].time()),
                 'expires_in'   => strtotime('+1 day', time()),
                 'dt_criacao'   => date("Y-m-d H:i:s"),
             ], $update::VALUES_MERGE);
@@ -81,7 +83,7 @@ class AuthResource extends AbstractResourceListener
             return [
                 "id_usuario"=>$results[0]['id'],
                 "nome"=>$results[0]['nome'],
-                "token"=>md5($results[0]['login'].$results[0]['senha'])
+                "token"=>md5($results[0]['login'].time())
             ];
         }
     }

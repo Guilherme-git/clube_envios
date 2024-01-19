@@ -16,6 +16,7 @@ class CalcularFreteResource extends AbstractResourceListener
 
     public function __construct()
     {
+        Utils::timezone();
         $this->adapter = Utils::DBConnection();
         $this->header = Utils::getHeader();
         $this->tokenValidate = Utils::validateToken();
