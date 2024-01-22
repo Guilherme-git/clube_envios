@@ -29,7 +29,9 @@ class Utils
     public static function validateToken()
     {
         self::timezone();
+
         $headers = self::getHeader();
+
         if(!isset($headers["token"])) {
             return [
                 "status" => 400,
